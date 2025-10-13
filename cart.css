@@ -1,0 +1,231 @@
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  background-color: #f4f7fb;
+  color: #333;
+}
+
+/* ====== En-tête ====== */
+header {
+  background: linear-gradient(135deg, #0078d7, #005a9e);
+  color: #fff;
+  text-align: center;
+  padding: 2rem 1rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+header h1 {
+  margin: 0;
+  font-size: 2.5rem;
+}
+/* ====== Barre de recherche dans l'en-tête ====== */
+header .search-bar {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+header .search-bar input[type="text"] {
+  width: 70%;
+  padding: 0.5rem;
+  border: 1px solid #fff;
+  border-radius: 20px 0 0 20px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+header .search-bar input[type="text"]:focus {
+  border-color: #005a9e;
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+}
+
+header .search-bar button {
+  background: #005a9e;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0 20px 20px 0;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+header .search-bar button:hover {
+  background: #003f6b;
+  transform: scale(1.05);
+}
+
+
+header p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+/* ====== Recherche ====== */
+#search {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  margin: 2.5rem auto;
+  max-width: 600px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#search:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+#search h2 {
+  color: #005a9e;
+  margin-bottom: 1.5rem;
+  font-size: 1.4em;
+  text-align: center;
+}
+
+#search label {
+  display: block;
+  margin-bottom: 0.7rem;
+  font-size: 1em;
+  color: #444;
+}
+
+#search input[type="text"] {
+  width: 100%;
+  padding: 0.7rem;
+  border: 1px solid #bbb;
+  border-radius: 6px;
+  font-size: 1em;
+  margin-bottom: 1.2rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#search input[type="text"]:focus {
+  border-color: #0078d7;
+  box-shadow: 0 0 5px rgba(0, 120, 215, 0.3);
+  outline: none;
+}
+
+#search button {
+  background: #0078d7;
+  color: #fff;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background 0.3s ease, transform 0.2s ease;
+  display: block;
+  margin: 0 auto;
+}
+
+#search button:hover {
+  background: #005a9e;
+  transform: scale(1.05);
+}
+
+/* ====== Conteneur principal ====== */
+main {
+  max-width: 1100px;
+  margin: 2rem auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  padding: 0 1rem;
+}
+
+/* ====== Liste des produits ====== */
+.products {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.products h2 {
+  color: #0078d7;
+  margin-bottom: 1.5rem;
+}
+
+.product {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.product:last-child {
+  border-bottom: none;
+}
+
+.product-info h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.product-info p {
+  margin: 0.2rem 0 0;
+  color: #666;
+}
+
+button {
+  background: #0078d7;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background: #005a9e;
+}
+
+/* ====== Panier ====== */
+.cart {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.cart h2 {
+  color: #0078d7;
+  margin-bottom: 1rem;
+}
+
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 0.5rem;
+}
+
+.cart-item:last-child {
+  border-bottom: none;
+}
+
+.total {
+  text-align: right;
+  margin-top: 1.5rem;
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #005a9e;
+}
+
+/* ====== Pied de page ====== */
+footer {
+  text-align: center;
+  background: #1a1a1a;
+  color: #ccc;
+  padding: 1rem;
+  margin-top: 3rem;
+  font-size: 0.9rem;
+}

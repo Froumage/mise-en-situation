@@ -1,0 +1,140 @@
+/* Header styling */
+
+header {
+  background: linear-gradient(135deg, #0078d7, #005a9e);
+  color: #fff;
+  text-align: center;
+  padding: 3rem 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+header img {
+  max-width: 60px;
+  height: auto;
+  margin-bottom: 1rem;
+  float: left;
+  margin-right: 1rem;
+  transition: transform 0.3s ease;
+}
+
+header h1 {
+  display: inline-block;
+  margin-right: 10px; 
+  text-align: left;
+  line-height: 1; 
+  display: flex;
+  align-items: center;
+  margin-left: 0; 
+}
+
+header img {
+  display: inline-block; 
+  vertical-align: middle; 
+  margin-right: 1rem; 
+}
+
+header img:hover {
+  transform: scale(1.1);
+}
+header h1 {
+  margin: 0;
+  font-size: 2.8rem;
+  letter-spacing: 1px;
+}
+
+
+/* Base typography and spacing */
+:root{
+  --gap: 18px;
+  --card-radius: 10px;
+  --accent: #0078d7;
+}
+html,body{ height:100%; }
+body{
+  margin:0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: #f6fbff;
+  color: #102033;
+}
+
+
+/* Center page content and limit width */
+.container{
+  max-width: 1100px;
+  margin: 0 auto 36px;
+  padding: 0 14px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--gap);
+}
+
+/* Card layout */
+.card{
+  background-color: var(--accent);
+  color: #fff;
+  border-radius: var(--card-radius);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 220px; /* baseline card height */
+  padding: 12px;
+}
+
+.card img{
+  width: 100%;
+  flex: 1 1 auto; /* image grows to fill remaining space */
+  min-height: 0; /* allow proper flex shrinking */
+  object-fit: cover; /* crop to cover container while preserving aspect */
+  display: block;
+  border-radius: 8px;
+}
+
+.card h2{ margin: 10px 0 6px 0; font-size: 1.05rem; }
+.card h3{ margin: 0; font-size: 0.95rem; font-weight: 600; }
+
+/* cart button positioned bottom-right */
+.card-cart{
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.18);
+  border-radius: 8px;
+  text-decoration: none;
+  transition: transform .12s ease, background .12s ease;
+  padding: 6px; /* ensure icon doesn't touch the edges */
+  overflow: visible; /* allow SVG stroke to render if it bleeds outside viewBox */
+}
+.card-cart img{
+  width: 60%;
+  height: 60%;
+  object-fit: contain; /* ensure full icon visible and centered */
+  display:block;
+}
+.card-cart:hover, .card-cart:focus{ transform: translateY(-3px); background: rgba(0,0,0,0.28); }
+
+/* Responsive breakpoints */
+@media (max-width: 900px){
+  .container{ grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
+  h1{ font-size: 1.3rem; }
+  .card{ min-height: 200px; }
+}
+
+@media (max-width: 600px){
+  .container{ grid-template-columns: 1fr; gap: 12px; padding: 0 10px; }
+  h1{ font-size: 1.15rem; margin-top: 14px; }
+  .card{ min-height: 180px; padding: 10px; border-radius: 8px; }
+  .card h2{ font-size: 1rem; }
+  .card h3{ font-size: 0.95rem; }
+  .card-cart{ width: 38px; height: 38px; right: 10px; bottom: 10px; }
+  .card-cart img{ width:18px; height:18px; }
+}
+
+@media (max-width: 380px){
+  h1{ font-size: 1rem; }
+  .card{ min-height: 160px; }
+}
