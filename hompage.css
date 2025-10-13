@@ -1,0 +1,189 @@
+body {
+  margin: 0;
+  font-family: "Poppins", "Segoe UI", Arial, sans-serif;
+  line-height: 1.6;
+  background-color: #f7f9fc;
+  color: #333;
+  scroll-behavior: smooth;
+}
+
+header {
+  background: linear-gradient(135deg, #0078d7, #005a9e);
+  color: #fff;
+  text-align: center;
+  padding: 3rem 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+header img {
+  max-width: 60px;
+  height: auto;
+  margin-bottom: 1rem;
+  float: left;
+  margin-right: 1rem;
+  transition: transform 0.3s ease;
+}
+
+header h1 {
+  display: inline-block;
+  margin-right: 10px; 
+  text-align: left;
+  line-height: 1; 
+  display: flex;
+  align-items: center;
+  margin-left: 0; 
+}
+
+header img {
+  display: inline-block; 
+  vertical-align: middle; 
+  margin-right: 1rem; 
+}
+
+header img:hover {
+  transform: scale(1.1);
+}
+header h1 {
+  margin: 0;
+  font-size: 2.8rem;
+  letter-spacing: 1px;
+}
+
+header p {
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+/* ====== Navigation ====== */
+nav {
+  background: #fff;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  padding: 1rem 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+nav a {
+  color: #0078d7;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+nav a:hover {
+  color: #005a9e;
+  text-decoration: underline;
+}
+
+/* ====== Contenu principal ====== */
+main {
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+  display: grid;
+  gap: 2rem;
+}
+
+/* ====== Sections ====== */
+section {
+  background: #fff;
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+section:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+section h2 {
+  color: #0078d7;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #0078d7;
+  display: inline-block;
+  padding-bottom: 0.3rem;
+}
+
+section p,
+section li {
+  font-size: 1rem;
+  color: #444;
+}
+
+/* ====== Boutons ====== */
+button,
+.btn {
+  background: #0078d7;
+  color: #fff;
+  border: none;
+  padding: 0.7rem 1.3rem;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+button:hover,
+.btn:hover {
+  background: #005a9e;
+  transform: translateY(-2px);
+}
+
+/* ====== Pied de page ====== */
+footer {
+  background: #1a1a1a;
+  color: #ccc;
+  text-align: center;
+  padding: 1.5rem 0;
+  font-size: 0.95rem;
+  margin-top: 3rem;
+}
+
+footer a {
+  color: #0078d7;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+/* ====== Grille Expérience / Compétences ====== */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.card {
+  background: #fefefe;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.card h3 {
+  color: #005a9e;
+  margin-bottom: 0.5rem;
+}
+
+/* ====== Animations légères ====== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+section {
+  animation: fadeIn 0.6s ease both;
+}
