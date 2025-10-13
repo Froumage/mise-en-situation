@@ -1,8 +1,66 @@
+/* Header styling */
+
+header {
+  background: linear-gradient(135deg, #0078d7, #005a9e);
+  color: #fff;
+  text-align: center;
+  padding: 3rem 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+header img {
+  max-width: 60px;
+  height: auto;
+  margin-bottom: 1rem;
+  float: left;
+  margin-right: 1rem;
+  transition: transform 0.3s ease;
+}
+
+header h1 {
+  display: inline-block;
+  margin-right: 10px; 
+  text-align: left;
+  line-height: 1; 
+  display: flex;
+  align-items: center;
+  margin-left: 0; 
+}
+
+header img {
+  display: inline-block; 
+  vertical-align: middle; 
+  margin-right: 1rem; 
+}
+
+header img:hover {
+  transform: scale(1.1);
+}
+header h1 {
+  margin: 0;
+  font-size: 2.8rem;
+  letter-spacing: 1px;
+}
+
+/* Header / main spacing */
+.site-header{
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(16,32,51,0.06);
+  padding: 14px 0;
+}
+.header-logo-container{ max-width: 1100px; margin: 0 auto; padding: 0 14px; display:flex; align-items:center; gap:12px; }
+.header-logo{ width:48px; height:48px; object-fit:contain; }
+.site-main{ padding-top: 20px; }
+
+
+
+
+
+
 /* Base typography and spacing */
 :root{
   --gap: 18px;
   --card-radius: 10px;
-  --accent: #0070fa;
+  --accent: #0078d7;
 }
 html,body{ height:100%; }
 body{
@@ -12,11 +70,6 @@ body{
   color: #102033;
 }
 
-h1{
-  text-align: center;
-  margin: 20px 12px;
-  font-size: 1.4rem;
-}
 
 /* Center page content and limit width */
 .container{
