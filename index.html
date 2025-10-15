@@ -1,76 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+ <head>
+ <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Accueil</title>
     <link rel="stylesheet" href="homepage.css">
+    <meta name="description" content="Application mobile-first pour organiser et effectuer vos courses en magasin.">
+    <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/list.css">
+  
 </head>
 <body>
 
-<header>
+<header class="topbar">
     <div class="header-logo-container">
         <img src="images/logo.png" alt="Logo" class="header-logo">
         <h1>Bienvenue sur votre application de courses</h1>
     </div>
+    <button id="menuBtn" class="icon-btn" aria-label="Menu">☰</button>
+    <div class="right-actions">
+      <button id="themeToggle" class="icon-btn" aria-label="Basculer thème">🌓</button>
+    </div>
+  </header>
 
-</header>
-    <nav>
-        <ul>
-            <li><a href="#contact">Contact</a></li>
-            <li><a href="cart.html">Panier</a></li>
-            <li><a href="product.html">Nos Produits</a></li>
-             <li><a href="connexion.html">Se connecter</a></li>
-    </nav>
-</header>
+  <nav id="mainNav" class="nav hidden" aria-hidden="true">
+    <a href="index.html">Ma liste</a>
+    <a href="connexion.html">Connexion</a>
+     <a href="pages/contact.html">Contact</a>
+    <a href="pages/legal.html">Mentions & CGV</a>
+  </nav>
 
+  <main class="container" id="app">
+    <section class="card">
+      <h2>Ma liste de courses</h2>
 
-<section id="search" style="font-size: 0.9em;">
-    <h2 style="font-size: 1.2em;">Rechercher un article</h2>
-    <form action="search_results.html" method="get">
-        <label for="search-query" style="font-size: 0.9em;">Entrez le nom de l'article:</label>
-        <input type="text" id="search-query" name="query" placeholder="Rechercher..." required style="font-size: 0.9em;">
-        <button type="submit" style="font-size: 0.9em;">Rechercher</button>
-    </form>
-</section>
+      <div class="controls">
+        <select id="categoryFilter" aria-label="Filtrer par catégorie">
+          <option value="all">Toutes catégories</option>
+          <option value="Fruits & Légumes">Fruits & Légumes</option>
+          <option value="Épicerie">Épicerie</option>
+          <option value="Boissons">Boissons</option>
+          <option value="Hygiène">Hygiène</option>
+          <option value="Boucherie">Boucherie</option>
+          <option value="Autres">Autres</option>
+        </select>
 
-<main>
-    <section id="intro">
-        <h2>Organisez vos courses en toute simplicité</h2>
-        <p>Découvrez une application intuitive pour mieux planifier et effectuer vos achats en magasin.</p>
+        <input id="searchInput" placeholder="Rechercher un produit" aria-label="Recherche produit">
+      </div>
+
+      <form id="addForm" class="add-form" aria-label="Ajouter un produit">
+        <input id="productName" placeholder="Nom du produit" required aria-label="Nom du produit">
+        <select id="productCategory" aria-label="Catégorie">
+          <option>Fruits & Légumes</option>
+          <option>Épicerie</option>
+          <option>Boissons</option>
+          <option>Hygiène</option>
+          <option>Boucherie</option>
+          <option>Autres</option>
+        </select>
+        <input id="productQty" placeholder="Quantité (ex: 1kg / 2)" aria-label="Quantité">
+        <button type="submit" class="primary">Ajouter</button>
+      </form>
+
+      <div class="list-meta">
+        <label for="presetSelect">Listes proposées</label>
+        <select id="presetSelect">
+          <option value="">-- Choisir --</option>
+        </select>
+        <button id="usePresetBtn">Charger</button>
+        <button id="clearBtn" class="danger">Vider</button>
+      </div>
+
+      <ul id="itemsList" class="items-list" aria-live="polite"></ul>
+
+      <div class="bottom-actions">
+        <button id="saveBtn">Sauvegarder</button>
+        <button id="shareBtn">Partager</button>
+        <span id="status" class="muted" aria-hidden="true"></span>
+      </div>
     </section>
-</main>
 
-<footer>
-    <section id="contact">
-        <h2>Contactez-nous</h2>
-        <form>
-            <label for="name">Nom:</label>
-            <input type="text" id="name" name="name" required>
-            
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-            
-            <label for="message">Message:</label>
-            <textarea id="message" name="message" required></textarea>
-            
-            <button type="submit">Envoyer</button>
-        </form>
-    </section>
+    <aside class="card info">
+      <h3>Astuce</h3>
+      <p>Triez par rayon pour gagner du temps en magasin. Utilise la fonctionnalité <strong>Partager</strong> pour envoyer ta liste à un ami.</p>
+      <hr/>
+      <h4>Fonctionnalités futures</h4>
+      <ul class="muted">
+        <li>Cartes des magasins</li>
+        <li>Comparaison de prix</li>
+        <li>Click & Collect</li>
+      </ul>
+    </aside>
+  </main>
 
-    <section id="legal">
-        <h2>Mentions légales</h2>
-        <p>Les informations légales seront ajoutées ici.</p>
-    </section>
-
-    <section id="social-media">
-        <h2>Suivez-nous</h2>
-        <ul>
-            <li><a href="#">Facebook</a></li>
-            <li><a href="#">Twitter</a></li>
-            <li><a href="#">Instagram</a></li>
-        </ul>
-    </section>
-</footer>
+  <footer class="footer">
+    <div>
+      <a href="pages/legal.html">Mentions légales</a> • <a href="pages/legal.html#cgv">CGV</a>
+    </div>
+    <div class="socials">
+      <a href="#" aria-label="Facebook">Facebook</a>
+      <a href="#" aria-label="Instagram">Instagram</a>
+    </div>
+  </footer>
+  <script src="js/main.js"></script>
+  <script src="js/list.js"></script>
 </body>
 </html>

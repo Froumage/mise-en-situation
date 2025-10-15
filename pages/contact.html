@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Contact — Courses Faciles</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/form.css">
+</head>
+<body>
+  <header class="topbar">
+    <a href="../index.html" class="icon-btn" aria-label="Retour">←</a>
+    <h1>Contact</h1>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2>Nous contacter</h2>
+      <p>Remplis le formulaire ci-dessous. (Envoi simulé côté front)</p>
+
+      <form id="contactForm" novalidate>
+        <div class="form-row">
+          <label for="c-name">Nom</label>
+          <input id="c-name" name="name" required />
+        </div>
+        <div class="form-row">
+          <label for="c-email">Email</label>
+          <input id="c-email" name="email" type="email" required />
+        </div>
+        <div class="form-row">
+          <label for="c-message">Message</label>
+          <textarea id="c-message" name="message" rows="5" required></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="primary">Envoyer</button>
+          <button type="reset" class="secondary">Effacer</button>
+        </div>
+        <div id="contactStatus" class="muted" role="status" aria-live="polite"></div>
+      </form>
+    </section>
+  </main>
+
+  <script src="../js/main.js"></script>
+  <script src="../js/contact.js"></script>
+</body>
+</html>
