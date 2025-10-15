@@ -1,6 +1,17 @@
-// list.js — CRUD + persistance + partage
 (function(){
-  const STORAGE_KEY = "grocery_app_lists_v1";
+  const STORAGE_KEY = "grocery_app_lists_v2";
+
+  // --- Prix fixes par catégorie ---
+  const fixedPrices = {
+    "Fruits & Légumes": 2.50,
+    "Épicerie": 3.00,
+    "Boissons": 1.80,
+    "Hygiène": 4.20,
+    "Boucherie": 8.50,
+    "Autres": 2.00
+  };
+
+  // --- Listes prédéfinies ---
   const presets = {
     "Semaine simple": [
       {name:"Pâtes", category:"Épicerie", qty:"1 paquet"},
@@ -17,7 +28,7 @@
 
   let items = [];
 
-  // DOM
+  // --- DOM Elements ---
   const itemsList = document.getElementById("itemsList");
   const addForm = document.getElementById("addForm");
   const productName = document.getElementById("productName");
@@ -32,19 +43,30 @@
   const searchInput = document.getElementById("searchInput");
   const categoryFilter = document.getElementById("categoryFilter");
 
+  // --- Élément pour afficher le total ---
+  let totalDisplay;
+
   function init(){
     const saved = localStorage.getItem(STORAGE_KEY);
     if(saved){
       try{ items = JSON.parse(saved); } catch(e){ items = []; }
     } else { items = []; }
 
-    // fill presets
+    // Remplir la liste des presets
     const names = Object.keys(presets);
     names.forEach(n=>{
       const opt = document.createElement("option");
       opt.value = n; opt.textContent = n;
       if(presetSelect) presetSelect.appendChild(opt);
     });
+
+    // Créer l'affichage du total
+    totalDisplay = document.createElement("div");
+    totalDisplay.className = "total-price";
+    totalDisplay.innerHTML = '💰 Total : <span id="totalAmount">0.00</span> €';
+    if (itemsList && itemsList.parentNode) {
+      itemsList.parentNode.appendChild(totalDisplay);
+    }
 
     render();
     attachEvents();
@@ -60,7 +82,12 @@
       const sel = presetSelect.value;
       if(!sel) return alert("Choisissez une liste proposée.");
       if(confirm("Charger la liste: " + sel + " ? (remplace la liste actuelle)")){
-        items = presets[sel].map(i=>({...i, done:false, id: Date.now() + Math.random()}));
+        items = presets[sel].map(i=>({
+          ...i,
+          done:false,
+          id: Date.now() + Math.random(),
+          price: fixedPrices[i.category] || fixedPrices["Autres"]
+        }));
         save(); render();
       }
     });
@@ -70,17 +97,32 @@
     window.addEventListener("beforeunload", ()=> save());
   }
 
+  // --- Ajouter un produit ---
   function addItem(){
     const name = productName.value.trim();
     if(!name) return;
     const category = productCategory.value;
     const qty = productQty.value.trim();
-    items.push({id: Date.now() + Math.random(), name, category, qty, done:false});
-    productName.value = ""; productQty.value = "";
-    render(); save();
+
+    const price = fixedPrices[category] || fixedPrices["Autres"];
+
+    items.push({
+      id: Date.now() + Math.random(),
+      name,
+      category,
+      qty,
+      price,
+      done:false
+    });
+
+    productName.value = "";
+    productQty.value = "";
+    render();
+    save();
     showStatus("Produit ajouté");
   }
 
+  // --- Affichage principal ---
   function render(){
     if(!itemsList) return;
     itemsList.innerHTML = "";
@@ -98,6 +140,7 @@
       li.textContent = "Aucun produit pour l'instant. Ajoute-en !";
       li.className = "muted";
       itemsList.appendChild(li);
+      updateTotal();
       return;
     }
 
@@ -106,28 +149,49 @@
 
       const checkbox = document.createElement("input");
       checkbox.type = "checkbox"; checkbox.checked = !!it.done;
-      checkbox.addEventListener("change", ()=>{ it.done = checkbox.checked; save(); render(); });
-
-      const left = document.createElement("div"); left.className = "item-left";
-      const title = document.createElement("div"); title.textContent = it.name;
-      const meta = document.createElement("div"); meta.className = "item-meta";
-      meta.textContent = `${it.qty || ""} • ${it.category}`;
-
-      left.appendChild(title); left.appendChild(meta);
-
-      const editBtn = document.createElement("button"); editBtn.className = "icon-btn"; editBtn.textContent = "✏️";
-      editBtn.addEventListener("click", ()=> editItem(it.id));
-
-      const delBtn = document.createElement("button"); delBtn.className = "icon-btn"; delBtn.textContent = "🗑️";
-      delBtn.addEventListener("click", ()=>{
-        if(confirm("Supprimer " + it.name + " ?")){ items = items.filter(x => x.id !== it.id); save(); render(); }
+      checkbox.addEventListener("change", ()=>{
+        it.done = checkbox.checked;
+        save(); render();
       });
 
-      li.appendChild(checkbox); li.appendChild(left); li.appendChild(editBtn); li.appendChild(delBtn);
+      const left = document.createElement("div");
+      left.className = "item-left";
+      const title = document.createElement("div");
+      title.textContent = it.name;
+      const meta = document.createElement("div");
+      meta.className = "item-meta";
+      meta.textContent = `${it.qty || ""} • ${it.category} • ${it.price.toFixed(2)} €`;
+
+      left.appendChild(title);
+      left.appendChild(meta);
+
+      const editBtn = document.createElement("button");
+      editBtn.className = "icon-btn";
+      editBtn.textContent = "✏️";
+      editBtn.addEventListener("click", ()=> editItem(it.id));
+
+      const delBtn = document.createElement("button");
+      delBtn.className = "icon-btn";
+      delBtn.textContent = "🗑️";
+      delBtn.addEventListener("click", ()=>{
+        if(confirm("Supprimer " + it.name + " ?")){
+          items = items.filter(x => x.id !== it.id);
+          save(); render();
+        }
+      });
+
+      li.appendChild(checkbox);
+      li.appendChild(left);
+      li.appendChild(editBtn);
+      li.appendChild(delBtn);
+
       itemsList.appendChild(li);
     });
+
+    updateTotal();
   }
 
+  // --- Modifier un produit ---
   function editItem(id){
     const it = items.find(x => x.id === id);
     if(!it) return;
@@ -139,17 +203,31 @@
     save(); render();
   }
 
+  // --- Calcul du total ---
+  function updateTotal(){
+    const total = items.reduce((sum, item) => sum + (item.price || 0), 0);
+    const totalAmount = document.getElementById("totalAmount");
+    if(totalAmount) totalAmount.textContent = total.toFixed(2);
+  }
+
+  // --- Sauvegarde locale ---
   function save(){
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
     showStatus("Sauvegardé");
   }
 
+  // --- Partage / copie ---
   async function shareList(){
     if(items.length === 0){ alert("La liste est vide."); return; }
-    const text = items.map(i => `${i.done ? "✅" : "◻️"} ${i.name}${i.qty ? " — " + i.qty : ""} (${i.category})`).join("\n");
+    const text = items.map(i => 
+      `${i.done ? "✅" : "◻️"} ${i.name}${i.qty ? " — " + i.qty : ""} (${i.category}) - ${i.price.toFixed(2)}€`
+    ).join("\n");
     if(navigator.share){
-      try{ await navigator.share({title:"Ma liste de courses", text}); showStatus("Partagé !"); return; }
-      catch(e){ console.warn(e); }
+      try{
+        await navigator.share({title:"Ma liste de courses", text});
+        showStatus("Partagé !");
+        return;
+      } catch(e){ console.warn(e); }
     }
     try{
       await navigator.clipboard.writeText(text);
@@ -159,11 +237,11 @@
     }
   }
 
+  // --- Message d’état ---
   function showStatus(msg){
-    const s = document.getElementById("status");
-    if(!s) return;
-    s.textContent = msg;
-    setTimeout(()=>{ if(s) s.textContent = ""; }, 1400);
+    if(!status) return;
+    status.textContent = msg;
+    setTimeout(()=>{ status.textContent = ""; }, 1400);
   }
 
   window.addEventListener("DOMContentLoaded", init);
