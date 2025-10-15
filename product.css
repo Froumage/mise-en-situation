@@ -1,44 +1,117 @@
 /* Header styling */
-
-header {
+header.topbar {
   background: linear-gradient(135deg, #0078d7, #005a9e);
   color: #fff;
-  text-align: center;
-  padding: 3rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 10;
 }
-header img {
+
+/* ----- CONTENEUR DU LOGO + TITRE ----- */
+.header-logo-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.header-logo-container img {
   max-width: 60px;
   height: auto;
-  margin-bottom: 1rem;
-  float: left;
-  margin-right: 1rem;
   transition: transform 0.3s ease;
 }
 
-header h1 {
-  display: inline-block;
-  margin-right: 10px; 
+.header-logo-container img:hover {
+  transform: scale(1.1);
+}
+
+.header-logo-container h1 {
+  font-size: 1.4rem;
+  margin: 0;
+  line-height: 1.2;
   text-align: left;
-  line-height: 1; 
+}
+
+/* ----- BOUTONS DU HEADER ----- */
+.icon-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.3s ease;
+}
+
+.icon-btn:hover {
+  transform: scale(1.1);
+  color: #dce9ff;
+}
+
+/* ----- ZONE DE DROITE ----- */
+.right-actions {
   display: flex;
   align-items: center;
-  margin-left: 0; 
+  gap: 1rem;
 }
 
-header img {
-  display: inline-block; 
-  vertical-align: middle; 
-  margin-right: 1rem; 
-}
+/* ----- RESPONSIVE ----- */
+@media (max-width: 768px) {
+  header.topbar {
+    flex-direction: column;
+    text-align: center;
+    padding: 1rem;
+  }
 
-header img:hover {
-  transform: scale(1.1);
+  .header-logo-container {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .header-logo-container h1 {
+    font-size: 1.2rem;
+  }
+
+  .right-actions {
+    margin-top: 0.5rem;
+  }
 }
 header h1 {
   margin: 0;
   font-size: 2.8rem;
   letter-spacing: 1px;
+}
+
+header p {
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+/* ====== Navigation ====== */
+nav {
+  background: #fff;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  padding: 1rem 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+nav a {
+  color: #0078d7;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+nav a:hover {
+  color: #005a9e;
+  text-decoration: underline;
 }
 
 
@@ -177,5 +250,40 @@ footer a {
 
 footer a:hover {
   text-decoration: underline;
+}
+
+/* ====== Grille Expérience / Compétences ====== */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.card {
+  background: #fefefe;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.card h3 {
+  color: #005a9e;
+  margin-bottom: 0.5rem;
+}
+
+/* ====== Animations légères ====== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+section {
+  animation: fadeIn 0.6s ease both;
 }
 
