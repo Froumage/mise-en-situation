@@ -7,79 +7,66 @@
     <link rel="stylesheet" href="product.css" />
   </head>
 
-  <header>
+    <header>
     <div class="header-logo-container">
-      <img src="images/logo.png" alt="Logo" class="header-logo" />
+      <a href="index.html" class="header-home" aria-label="Accueil">
+        <img src="images/logo.png" alt="Logo" class="header-logo" />
+      </a>
       <h1>Nos produits</h1>
     </div>
   </header>
   <body>
-    <div class="container">
-      <div class="card">
-        <img src="assets/darty.webp" alt="Produit 1" />
-        <h2>Lave-linge</h2>
-        <h3>499,99€</h3>
-        <a
-          class="card-cart"
-          href="#"
-          aria-label="Ajouter Produit 1 au panier"
-          data-id="1"
-        >
-          <img src="assets/cart.svg" alt="Panier" />
-        </a>
-      </div>
-      <div class="card">
-        <img src="assets/ananas.webp" alt="Produit 2" />
-        <h2>ananas</h2>
-        <h3>2,99€</h3>
-        <a
-          class="card-cart"
-          href="#"
-          aria-label="Ajouter Produit 2 au panier"
-          data-id="2"
-        >
-          <img src="assets/cart.svg" alt="Panier" />
-        </a>
-      </div>
-      <div class="card">
-        <img src="assets/banane.webp" alt="Produit 3" />
-        <h2>banane</h2>
-        <h3>1,99€</h3>
-        <a
-          class="card-cart"
-          href="#"
-          aria-label="Ajouter Produit 3 au panier"
-          data-id="3"
-        >
-          <img src="assets/cart.svg" alt="Panier" />
-        </a>
-      </div>
-      <div class="card">
-        <img src="assets/citron.webp" alt="Produit 4" />
-        <h2>citron</h2>
-        <h3>0,99€</h3>
-        <a
-          class="card-cart"
-          href="#"
-          aria-label="Ajouter Produit 4 au panier"
-          data-id="4"
-        >
-          <img src="assets/cart.svg" alt="Panier" />
-        </a>
-      </div>
-      <div class="card">
-        <img src="assets/grenade.webp" alt="Produit 5" />
-        <h2>grenade</h2>
-        <h3>3,99€</h3>
-        <a
-          class="card-cart"
-          href="#"
-          aria-label="Ajouter Produit 5 au panier"
-          data-id="5"
-        >
-          <img src="assets/cart.svg" alt="Panier" />
-        </a>
-      </div>
+    <div class="container categories">
+      <a class="category-card" href="#" data-cat="fruits-legumes">
+        <div class="img-wrap">
+          <img src="assets/fruit-et-legumes.png" alt="Fruits et légumes" />
+        </div>
+        <div class="category-label">Fruits &amp; Légumes</div>
+      </a>
+
+      <a class="category-card" href="#" data-cat="epicerie">
+        <div class="img-wrap">
+          <img src="assets/epicerie.jpg" alt="Épicerie" />
+        </div>
+        <div class="category-label">Épicerie</div>
+      </a>
+
+      <a class="category-card" href="#" data-cat="boissons">
+        <div class="img-wrap">
+          <img src="assets/boissons.jpg" alt="Boissons" />
+        </div>
+        <div class="category-label">Boissons</div>
+      </a>
+
+      <a class="category-card" href="#" data-cat="hygiene">
+        <div class="img-wrap">
+          <img src="assets/hygiene.jpg" alt="Hygiène" />
+        </div>
+        <div class="category-label">Hygiène</div>
+      </a>
+
+      <a class="category-card" href="#" data-cat="boucherie">
+        <div class="img-wrap">
+          <img src="assets/viande.png" alt="Boucherie" />
+        </div>
+        <div class="category-label">Boucherie</div>
+      </a>
+
+      <a class="category-card" href="#" data-cat="autres">
+        <div class="img-wrap">
+          <img src="assets/electro.jpg" alt="Autres" />
+        </div>
+        <div class="category-label">Autres</div>
+      </a>
     </div>
   </body>
+  <footer class="footer">
+    <div>
+      <a href="pages/legal.html">Mentions légales</a> • <a href="pages/legal.html#cgv">CGV</a>
+    </div>
+    <div class="socials">
+      <a href="#" aria-label="Facebook">Facebook</a>
+      <a href="#" aria-label="Instagram">Instagram</a>
+    </div>
+  </footer>
 </html>
