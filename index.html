@@ -47,21 +47,22 @@
         </select>
 
         <input id="searchInput" placeholder="Rechercher un produit" aria-label="Recherche produit">
-      </div>
+        <input id="productPrice" placeholder="Prix (€)" type="number" step="0.01" aria-label="Prix du produit">
 
-      <form id="addForm" class="add-form" aria-label="Ajouter un produit">
-        <input id="productName" placeholder="Nom du produit" required aria-label="Nom du produit">
-        <select id="productCategory" aria-label="Catégorie">
-          <option>Fruits & Légumes</option>
-          <option>Épicerie</option>
-          <option>Boissons</option>
-          <option>Hygiène</option>
-          <option>Boucherie</option>
-          <option>Autres</option>
-        </select>
-        <input id="productQty" placeholder="Quantité (ex: 1kg / 2)" aria-label="Quantité">
-        <button type="submit" class="primary">Ajouter</button>
-      </form>
+      </div>
+<form id="addForm" class="add-form" aria-label="Ajouter un produit">
+  <input id="productName" placeholder="Nom du produit" required aria-label="Nom du produit">
+  <select id="productCategory" aria-label="Catégorie">
+    <option>Fruits & Légumes</option>
+    <option>Épicerie</option>
+    <option>Boissons</option>
+    <option>Hygiène</option>
+    <option>Boucherie</option>
+    <option>Autres</option>
+  </select>
+  <input id="productQty" placeholder="Quantité (ex: 1kg / 2)" aria-label="Quantité">
+  <button type="submit" class="primary">Ajouter</button>
+</form>
 
       <div class="list-meta">
         <label for="presetSelect">Listes proposées</label>
