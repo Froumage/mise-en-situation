@@ -17,6 +17,7 @@
       {name:"Pâtes", category:"Épicerie", qty:"1 paquet"},
       {name:"Tomates", category:"Fruits & Légumes", qty:"1kg"},
       {name:"Lait", category:"Boissons", qty:"1L"},
+       {name:"Coca", category:"Boissons", qty:"1L"},
       {name:"Savon", category:"Hygiène", qty:"2"}
     ],
     "Barbecue": [
