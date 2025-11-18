@@ -1,32 +1,165 @@
 (function(){
-  const STORAGE_KEY = "grocery_app_lists_v2";
-
-  // --- Prix fixes par catégorie ---
-  const fixedPrices = {
-    "Fruits & Légumes": 2.50,
-    "Épicerie": 3.00,
-    "Boissons": 1.80,
-    "Hygiène": 4.20,
-    "Boucherie": 8.50,
-    "Autres": 2.00
-  };
-
-  // --- Listes prédéfinies ---
-  const presets = {
-    "Semaine simple": [
-      {name:"Pâtes", category:"Épicerie", qty:"1 paquet"},
-      {name:"Tomates", category:"Fruits & Légumes", qty:"1kg"},
-      {name:"Lait", category:"Boissons", qty:"1L"},
-      {name:"Savon", category:"Hygiène", qty:"2"}
-    ],
-    "Barbecue": [
-      {name:"Saucisses", category:"Boucherie", qty:"1kg"},
-      {name:"Pain Burger", category:"Épicerie", qty:"6"},
-      {name:"Salade", category:"Fruits & Légumes", qty:"1"}
-    ]
-  };
-
+  let categories = [];
   let items = [];
+  let templates = [];
+  let products = [];
+  let currentListId = null;
+
+  // Storage key for localStorage
+  const STORAGE_KEY = 'shoppingListItems';
+
+  // API base URL - disabled for local storage only
+  // const API_BASE = 'http://localhost:8000/api';
+
+  // Load categories from hardcoded list
+  function loadCategories() {
+    categories = [
+      { id: 1, name: 'Fruits & Légumes', icon: 'fruit-et-legumes.png' },
+      { id: 2, name: 'Épicerie', icon: 'epicerie.jpg' },
+      { id: 3, name: 'Boissons', icon: 'boissons.jpg' },
+      { id: 4, name: 'Hygiène', icon: 'hygiene.jpg' },
+      { id: 5, name: 'Boucherie', icon: 'viande.png' },
+      { id: 6, name: 'Pain', icon: 'pain.png' },
+      { id: 7, name: 'Électroménager', icon: 'electro.jpg' },
+      { id: 8, name: 'Électronique', icon: 'electro.png' },
+      { id: 9, name: 'Autres', icon: null }
+    ];
+    populateCategorySelects();
+  }
+
+  // Load products with fixed prices
+  function loadProducts() {
+    products = [
+      // Fruits & Légumes
+      { name: 'Bananes', category: 'Fruits & Légumes', price: 2.50 },
+      { name: 'Pommes', category: 'Fruits & Légumes', price: 3.20 },
+      { name: 'Oranges', category: 'Fruits & Légumes', price: 2.80 },
+      { name: 'Tomates', category: 'Fruits & Légumes', price: 2.90 },
+      { name: 'Carottes', category: 'Fruits & Légumes', price: 1.80 },
+      { name: 'Laitue', category: 'Fruits & Légumes', price: 1.50 },
+      { name: 'Concombres', category: 'Fruits & Légumes', price: 1.70 },
+      { name: 'Poivrons', category: 'Fruits & Légumes', price: 2.20 },
+
+      // Épicerie
+      { name: 'Pain', category: 'Pain', price: 1.20 },
+      { name: 'Lait', category: 'Épicerie', price: 1.50 },
+      { name: 'Oeufs', category: 'Épicerie', price: 3.80 },
+      { name: 'Riz', category: 'Épicerie', price: 2.10 },
+      { name: 'Pâtes', category: 'Épicerie', price: 1.90 },
+      { name: 'Café', category: 'Épicerie', price: 4.50 },
+      { name: 'Thé', category: 'Épicerie', price: 3.20 },
+      { name: 'Sucre', category: 'Épicerie', price: 1.80 },
+
+      // Boissons
+      { name: 'Eau minérale', category: 'Boissons', price: 0.80 },
+      { name: 'Jus d\'orange', category: 'Boissons', price: 2.50 },
+      { name: 'Soda', category: 'Boissons', price: 1.90 },
+      { name: 'Vin rouge', category: 'Boissons', price: 8.50 },
+      { name: 'Bière', category: 'Boissons', price: 1.60 },
+
+      // Hygiène
+      { name: 'Dentifrice', category: 'Hygiène', price: 2.80 },
+      { name: 'Savon', category: 'Hygiène', price: 1.90 },
+      { name: 'Shampooing', category: 'Hygiène', price: 3.50 },
+      { name: 'Papier toilette', category: 'Hygiène', price: 4.20 },
+
+      // Boucherie
+      { name: 'Steak haché', category: 'Boucherie', price: 6.50 },
+      { name: 'Poulet', category: 'Boucherie', price: 8.90 },
+      { name: 'Saucisses', category: 'Boucherie', price: 5.20 },
+      { name: 'Jambon', category: 'Boucherie', price: 4.80 },
+
+      // Autres
+      { name: 'Lessive', category: 'Autres', price: 3.90 },
+      { name: 'Détergent', category: 'Autres', price: 2.70 },
+      { name: 'Ampoules', category: 'Électronique', price: 1.50 },
+      { name: 'Batteries', category: 'Électronique', price: 4.90 }
+    ];
+    populateProductSelect();
+  }
+
+  // Load templates from hardcoded list
+  function loadTemplates() {
+    templates = [
+      { id: 1, name: 'Courses hebdomadaires', description: 'Liste de courses pour une semaine type' },
+      { id: 2, name: 'Courses du weekend', description: 'Courses pour le weekend' },
+      { id: 3, name: 'Courses de fête', description: 'Préparation pour une fête' },
+      { id: 4, name: 'Courses de base', description: 'Produits essentiels' },
+      { id: 5, name: 'Courses bio', description: 'Produits biologiques' },
+      { id: 6, name: 'Courses végétariennes', description: 'Liste végétarienne' },
+      { id: 7, name: 'Courses pour bébé', description: 'Produits pour bébé' },
+      { id: 8, name: 'Courses de nettoyage', description: 'Produits d\'entretien' }
+    ];
+    populateTemplateSelect();
+  }
+
+  // Populate template select
+  function populateTemplateSelect() {
+    const presetSelect = document.getElementById("presetSelect");
+    if (presetSelect) {
+      presetSelect.innerHTML = '<option value="">-- Choisir --</option>';
+      templates.forEach(template => {
+        const option = document.createElement('option');
+        option.value = template.id;
+        option.textContent = template.name;
+        presetSelect.appendChild(option);
+      });
+    }
+  }
+
+  // Populate product select with fixed products, optionally filtered by category
+  function populateProductSelect(categoryFilter = null) {
+    const productName = document.getElementById("productName");
+    if (productName) {
+      productName.innerHTML = '<option value="">-- Choisir un produit --</option>';
+      const filteredProducts = categoryFilter ? products.filter(p => p.category === categoryFilter) : products;
+      filteredProducts.forEach(product => {
+        const option = document.createElement('option');
+        option.value = product.name;
+        option.textContent = `${product.name} - ${product.price.toFixed(2)} €`;
+        option.dataset.price = product.price;
+        option.dataset.category = product.category;
+        productName.appendChild(option);
+      });
+    }
+  }
+
+  // Populate category selects
+  function populateCategorySelects() {
+    const productCategory = document.getElementById("productCategory");
+    const categoryFilter = document.getElementById("categoryFilter");
+
+    if (productCategory) {
+      productCategory.innerHTML = '';
+      categories.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat.name;
+        option.textContent = cat.name;
+        productCategory.appendChild(option);
+      });
+    }
+
+    if (categoryFilter) {
+      categoryFilter.innerHTML = '<option value="all">Toutes catégories</option>';
+      categories.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat.name;
+        option.textContent = cat.name;
+        categoryFilter.appendChild(option);
+      });
+    }
+  }
+
+  // Load items from localStorage
+  function loadItems() {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      items = JSON.parse(stored);
+    } else {
+      items = [];
+    }
+    render();
+  }
 
   // --- DOM Elements ---
   const itemsList = document.getElementById("itemsList");
@@ -34,31 +167,29 @@
   const productName = document.getElementById("productName");
   const productCategory = document.getElementById("productCategory");
   const productQty = document.getElementById("productQty");
+  const productPrice = document.getElementById("productPrice");
   const saveBtn = document.getElementById("saveBtn");
   const status = document.getElementById("status");
   const clearBtn = document.getElementById("clearBtn");
   const shareBtn = document.getElementById("shareBtn");
-  const presetSelect = document.getElementById("presetSelect");
-  const usePresetBtn = document.getElementById("usePresetBtn");
-  const searchInput = document.getElementById("searchInput");
   const categoryFilter = document.getElementById("categoryFilter");
 
   // --- Élément pour afficher le total ---
   let totalDisplay;
 
-  function init(){
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if(saved){
-      try{ items = JSON.parse(saved); } catch(e){ items = []; }
-    } else { items = []; }
+  // Expose functions for external use
+  window.ListManager = {
+    getItems: () => items,
+    addItem: addItem,
+    clearItems: clearItems
+  };
 
-    // Remplir la liste des presets
-    const names = Object.keys(presets);
-    names.forEach(n=>{
-      const opt = document.createElement("option");
-      opt.value = n; opt.textContent = n;
-      if(presetSelect) presetSelect.appendChild(opt);
-    });
+  function init(){
+    // Load categories, templates, products and items from local storage
+    loadCategories();
+    loadTemplates();
+    loadProducts();
+    loadItems();
 
     // Créer l'affichage du total
     totalDisplay = document.createElement("div");
@@ -76,25 +207,23 @@
     if(addForm) addForm.addEventListener("submit", e=>{ e.preventDefault(); addItem(); });
     if(saveBtn) saveBtn.addEventListener("click", save);
     if(clearBtn) clearBtn.addEventListener("click", ()=>{
-      if(confirm("Vider la liste ?")){ items = []; save(); render(); }
-    });
-    if(usePresetBtn) usePresetBtn.addEventListener("click", ()=>{
-      const sel = presetSelect.value;
-      if(!sel) return alert("Choisissez une liste proposée.");
-      if(confirm("Charger la liste: " + sel + " ? (remplace la liste actuelle)")){
-        items = presets[sel].map(i=>({
-          ...i,
-          done:false,
-          id: Date.now() + Math.random(),
-          price: fixedPrices[i.category] || fixedPrices["Autres"]
-        }));
-        save(); render();
-      }
+      if(confirm("Vider la liste ?")){ clearItems(); }
     });
     if(shareBtn) shareBtn.addEventListener("click", shareList);
-    if(searchInput) searchInput.addEventListener("input", render);
     if(categoryFilter) categoryFilter.addEventListener("change", render);
-    window.addEventListener("beforeunload", ()=> save());
+
+    // Product selection change event
+    if(productName) productName.addEventListener("change", updatePriceAndCategory);
+
+    // Category selection change event to filter products
+    if(productCategory) productCategory.addEventListener("change", filterProductsByCategory);
+
+    // Template functionality
+    const presetSelect = document.getElementById("presetSelect");
+    const loadPresetBtn = document.getElementById("loadPresetBtn");
+    if(presetSelect && loadPresetBtn) {
+      loadPresetBtn.addEventListener("click", loadTemplate);
+    }
   }
 
   // --- Ajouter un produit ---
@@ -103,35 +232,44 @@
     if(!name) return;
     const category = productCategory.value;
     const qty = productQty.value.trim();
+    const price = parseFloat(productPrice.value) || 0;
 
-    const price = fixedPrices[category] || fixedPrices["Autres"];
-
-    items.push({
-      id: Date.now() + Math.random(),
+    const newItem = {
+      id: Date.now(), // Simple ID generation
       name,
       category,
-      qty,
+      quantity: qty,
       price,
-      done:false
-    });
+      done: false
+    };
 
+    items.push(newItem);
     productName.value = "";
     productQty.value = "";
+    productPrice.value = "";
     render();
-    save();
     showStatus("Produit ajouté");
+
+    // Sauvegarder automatiquement la liste
+    save();
+
+    // Ajouter automatiquement au panier
+    if (window.CartManager) {
+      window.CartManager.addToCart(newItem);
+    }
+
+    // Rediriger directement vers le panier
+    window.location.href = 'cart.html';
   }
 
   // --- Affichage principal ---
   function render(){
     if(!itemsList) return;
     itemsList.innerHTML = "";
-    const q = (searchInput && searchInput.value || "").trim().toLowerCase();
     const cat = (categoryFilter && categoryFilter.value) || "all";
 
     const filtered = items.filter(it=>{
       if(cat !== "all" && it.category !== cat) return false;
-      if(q && !(it.name.toLowerCase().includes(q) || (it.qty || "").toLowerCase().includes(q))) return false;
       return true;
     });
 
@@ -149,10 +287,7 @@
 
       const checkbox = document.createElement("input");
       checkbox.type = "checkbox"; checkbox.checked = !!it.done;
-      checkbox.addEventListener("change", ()=>{
-        it.done = checkbox.checked;
-        save(); render();
-      });
+      checkbox.addEventListener("change", ()=> updateItem(it.id, { done: checkbox.checked }));
 
       const left = document.createElement("div");
       left.className = "item-left";
@@ -160,7 +295,7 @@
       title.textContent = it.name;
       const meta = document.createElement("div");
       meta.className = "item-meta";
-      meta.textContent = `${it.qty || ""} • ${it.category} • ${it.price.toFixed(2)} €`;
+      meta.textContent = `${it.quantity || ""} • ${it.category} • ${parseFloat(it.price).toFixed(2)} €`;
 
       left.appendChild(title);
       left.appendChild(meta);
@@ -173,12 +308,7 @@
       const delBtn = document.createElement("button");
       delBtn.className = "icon-btn";
       delBtn.textContent = "🗑️";
-      delBtn.addEventListener("click", ()=>{
-        if(confirm("Supprimer " + it.name + " ?")){
-          items = items.filter(x => x.id !== it.id);
-          save(); render();
-        }
-      });
+      delBtn.addEventListener("click", ()=> deleteItem(it.id));
 
       li.appendChild(checkbox);
       li.appendChild(left);
@@ -197,10 +327,14 @@
     if(!it) return;
     const newName = prompt("Modifier le nom du produit", it.name);
     if(newName === null) return;
-    it.name = newName.trim() || it.name;
-    const newQty = prompt("Quantité", it.qty || "");
-    if(newQty !== null) it.qty = newQty.trim();
-    save(); render();
+    const newQty = prompt("Quantité", it.quantity || "");
+    const newPrice = prompt("Prix", it.price || "");
+    if(newQty !== null || newPrice !== null) {
+      const updates = {};
+      if(newQty !== null) updates.quantity = newQty.trim();
+      if(newPrice !== null) updates.price = parseFloat(newPrice) || 0;
+      updateItem(it.id, updates);
+    }
   }
 
   // --- Calcul du total ---
@@ -219,8 +353,8 @@
   // --- Partage / copie ---
   async function shareList(){
     if(items.length === 0){ alert("La liste est vide."); return; }
-    const text = items.map(i => 
-      `${i.done ? "✅" : "◻️"} ${i.name}${i.qty ? " — " + i.qty : ""} (${i.category}) - ${i.price.toFixed(2)}€`
+    const text = items.map(i =>
+      `${i.done ? "✅" : "◻️"} ${i.name}${i.quantity ? " — " + i.quantity : ""} (${i.category}) - ${parseFloat(i.price).toFixed(2)}€`
     ).join("\n");
     if(navigator.share){
       try{
@@ -235,6 +369,203 @@
     }catch(e){
       prompt("Copie manuelle de la liste :", text);
     }
+  }
+
+  // --- Update item locally ---
+  function updateItem(id, updates) {
+    const index = items.findIndex(item => item.id === id);
+    if (index !== -1) {
+      items[index] = { ...items[index], ...updates };
+    }
+    render();
+    showStatus("Produit mis à jour");
+    // Sauvegarder automatiquement après mise à jour
+    save();
+  }
+
+  // --- Delete item locally ---
+  function deleteItem(id) {
+    if (!confirm("Supprimer cet article ?")) return;
+    items = items.filter(item => item.id !== id);
+    render();
+    showStatus("Produit supprimé");
+    // Sauvegarder automatiquement après suppression
+    save();
+  }
+
+  // --- Clear all items ---
+  function clearItems() {
+    items = [];
+    render();
+    showStatus("Liste vidée");
+    // Sauvegarder automatiquement après vidage
+    save();
+  }
+
+  // --- Load template ---
+  async function loadTemplate() {
+    const presetSelect = document.getElementById("presetSelect");
+    const templateId = presetSelect.value;
+    if (!templateId) {
+      showStatus("Sélectionnez un modèle");
+      return;
+    }
+
+    try {
+      const response = await fetch(`backend/templates.php?id=${templateId}`);
+      if (response.ok) {
+        const templateItems = await response.json();
+        templateItems.forEach(item => {
+          const newItem = {
+            id: Date.now() + Math.random(), // Unique ID
+            name: item.name,
+            category: item.category,
+            quantity: item.quantity,
+            price: item.price || 0,
+            done: false
+          };
+          items.push(newItem);
+        });
+        render();
+        showStatus("Modèle chargé");
+        // Sauvegarder automatiquement après chargement du modèle
+        save();
+      } else {
+        console.warn('Failed to load template items from API, using fallback');
+        // Fallback to hardcoded template items
+        const templateItems = getTemplateItems(templateId);
+        templateItems.forEach(item => {
+          const newItem = {
+            id: Date.now() + Math.random(), // Unique ID
+            name: item.name,
+            category: item.category,
+            quantity: item.quantity,
+            price: item.price || 0,
+            done: false
+          };
+          items.push(newItem);
+        });
+        render();
+        showStatus("Modèle chargé");
+        save();
+      }
+    } catch (error) {
+      console.error('Error loading template:', error);
+      // Fallback to hardcoded template items
+      const templateItems = getTemplateItems(templateId);
+      templateItems.forEach(item => {
+        const newItem = {
+          id: Date.now() + Math.random(), // Unique ID
+          name: item.name,
+          category: item.category,
+          quantity: item.quantity,
+          price: item.price || 0,
+          done: false
+        };
+        items.push(newItem);
+      });
+      render();
+      showStatus("Modèle chargé");
+      save();
+    }
+  }
+
+  // --- Get template items ---
+  function getTemplateItems(templateId) {
+    const templateData = {
+      1: [ // Courses hebdomadaires
+        { name: 'Pain', category: 'Pain', quantity: '1 baguette', price: 1.20 },
+        { name: 'Lait', category: 'Épicerie', quantity: '2L', price: 1.50 },
+        { name: 'Oeufs', category: 'Épicerie', quantity: '12', price: 3.80 },
+        { name: 'Bananes', category: 'Fruits & Légumes', quantity: '1kg', price: 2.50 },
+        { name: 'Pommes', category: 'Fruits & Légumes', quantity: '1kg', price: 3.20 },
+        { name: 'Tomates', category: 'Fruits & Légumes', quantity: '500g', price: 2.90 },
+        { name: 'Riz', category: 'Épicerie', quantity: '1kg', price: 2.10 },
+        { name: 'Pâtes', category: 'Épicerie', quantity: '500g', price: 1.90 },
+        { name: 'Fromage', category: 'Boucherie', quantity: '200g', price: 4.50 },
+        { name: 'Yaourt', category: 'Boissons', quantity: '6', price: 2.40 }
+      ],
+      2: [ // Courses du weekend
+        { name: 'Croissants', category: 'Pain', quantity: '6', price: 3.00 },
+        { name: 'Café', category: 'Épicerie', quantity: '500g', price: 4.50 },
+        { name: 'Jus d\'orange', category: 'Boissons', quantity: '1L', price: 2.50 },
+        { name: 'Pain au chocolat', category: 'Pain', quantity: '4', price: 2.80 },
+        { name: 'Confiture', category: 'Épicerie', quantity: '1 pot', price: 3.20 }
+      ],
+      3: [ // Courses de fête
+        { name: 'Champagne', category: 'Boissons', quantity: '1 bouteille', price: 25.00 },
+        { name: 'Vin rouge', category: 'Boissons', quantity: '2 bouteilles', price: 8.50 },
+        { name: 'Apéritifs', category: 'Boissons', quantity: 'assortis', price: 15.00 },
+        { name: 'Chips', category: 'Épicerie', quantity: '3 paquets', price: 2.50 },
+        { name: 'Olives', category: 'Épicerie', quantity: '500g', price: 4.80 },
+        { name: 'Fromage', category: 'Boucherie', quantity: '500g', price: 12.00 },
+        { name: 'Charcuterie', category: 'Boucherie', quantity: '300g', price: 8.90 },
+        { name: 'Dessert', category: 'Autres', quantity: '1', price: 15.00 }
+      ],
+      4: [ // Courses de base
+        { name: 'Pain', category: 'Pain', quantity: '1', price: 1.20 },
+        { name: 'Lait', category: 'Épicerie', quantity: '1L', price: 0.90 },
+        { name: 'Oeufs', category: 'Épicerie', quantity: '6', price: 2.10 },
+        { name: 'Beurre', category: 'Épicerie', quantity: '250g', price: 2.80 },
+        { name: 'Café', category: 'Épicerie', quantity: '250g', price: 3.50 }
+      ],
+      5: [ // Courses bio
+        { name: 'Pain bio', category: 'Pain', quantity: '1', price: 2.50 },
+        { name: 'Lait bio', category: 'Épicerie', quantity: '1L', price: 1.80 },
+        { name: 'Oeufs bio', category: 'Épicerie', quantity: '6', price: 4.20 },
+        { name: 'Fruits bio', category: 'Fruits & Légumes', quantity: '1kg', price: 6.00 },
+        { name: 'Légumes bio', category: 'Fruits & Légumes', quantity: '1kg', price: 5.50 },
+        { name: 'Riz bio', category: 'Épicerie', quantity: '500g', price: 3.20 }
+      ],
+      6: [ // Courses végétariennes
+        { name: 'Fruits', category: 'Fruits & Légumes', quantity: '2kg', price: 5.00 },
+        { name: 'Légumes', category: 'Fruits & Légumes', quantity: '2kg', price: 4.50 },
+        { name: 'Pâtes', category: 'Épicerie', quantity: '500g', price: 1.90 },
+        { name: 'Riz', category: 'Épicerie', quantity: '500g', price: 2.10 },
+        { name: 'Légumineuses', category: 'Épicerie', quantity: '500g', price: 2.80 },
+        { name: 'Fromage végétal', category: 'Autres', quantity: '200g', price: 3.50 },
+        { name: 'Yaourt végétal', category: 'Boissons', quantity: '6', price: 3.00 }
+      ],
+      7: [ // Courses pour bébé
+        { name: 'Lait infantile', category: 'Boissons', quantity: '800g', price: 18.50 },
+        { name: 'Couches', category: 'Hygiène', quantity: '1 paquet', price: 12.90 },
+        { name: 'Petits pots', category: 'Autres', quantity: '12', price: 8.50 },
+        { name: 'Lingettes', category: 'Hygiène', quantity: '1 paquet', price: 4.20 },
+        { name: 'Crème pour bébé', category: 'Hygiène', quantity: '1 tube', price: 6.80 }
+      ],
+      8: [ // Courses de nettoyage
+        { name: 'Lessive', category: 'Autres', quantity: '3L', price: 4.50 },
+        { name: 'Détergent vaisselle', category: 'Autres', quantity: '1L', price: 2.80 },
+        { name: 'Nettoyant multi-usage', category: 'Autres', quantity: '750ml', price: 2.20 },
+        { name: 'Papier toilette', category: 'Hygiène', quantity: '12 rouleaux', price: 6.50 },
+        { name: 'Sac poubelle', category: 'Autres', quantity: '30', price: 3.90 },
+        { name: 'Éponges', category: 'Autres', quantity: '5', price: 2.50 }
+      ]
+    };
+    return templateData[templateId] || [];
+  }
+
+  // Update price and category when product is selected
+  function updatePriceAndCategory() {
+    const selectedOption = productName.options[productName.selectedIndex];
+    if (selectedOption && selectedOption.value) {
+      const price = parseFloat(selectedOption.dataset.price) || 0;
+      const category = selectedOption.dataset.category || "";
+      productPrice.value = price.toFixed(2);
+      productCategory.value = category;
+    } else {
+      productPrice.value = "";
+      productCategory.value = "";
+    }
+  }
+
+  // Filter products by selected category
+  function filterProductsByCategory() {
+    const selectedCategory = productCategory.value;
+    populateProductSelect(selectedCategory || null);
+    // Clear product selection and price when category changes
+    productName.value = "";
+    productPrice.value = "";
   }
 
   // --- Message d’état ---
