@@ -14,7 +14,6 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 if ($method === 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
-
     if (!$data) {
         echo json_encode(['success' => false, 'message' => 'Invalid JSON data']);
         exit;
