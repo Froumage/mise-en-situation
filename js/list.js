@@ -1,9 +1,12 @@
+import { loadCategories } from "./category/functions.js";
+import { loadProducts } from "./product/functions.js";
 (function(){
   let categories = [];
   let items = [];
   let templates = [];
   let products = [];
   let currentListId = null;
+  let baseUrl = 'http://localhost:8000'; // Not used in local storage mode
 
   // Storage key for localStorage
   const STORAGE_KEY = 'shoppingListItems';
@@ -11,97 +14,10 @@
   // API base URL - disabled for local storage only
   // const API_BASE = 'http://localhost:8000/api';
 
-  // Load categories from API
-  async function loadCategories() {
-    try {
-      const response = await fetch('backend/categories.php');
-      if (response.ok) {
-        categories = await response.json();
-      } else {
-        console.warn('Failed to load categories from API, using fallback');
-        // Fallback to hardcoded categories
-        categories = [
-          { id: 1, name: 'Fruits & Légumes', icon: 'fruit-et-legumes.png' },
-          { id: 2, name: 'Épicerie', icon: 'epicerie.jpg' },
-          { id: 3, name: 'Boissons', icon: 'boissons.jpg' },
-          { id: 4, name: 'Hygiène', icon: 'hygiene.jpg' },
-          { id: 5, name: 'Boucherie', icon: 'viande.png' },
-          { id: 6, name: 'Pain', icon: 'pain.png' },
-          { id: 7, name: 'Électroménager', icon: 'electro.jpg' },
-          { id: 8, name: 'Électronique', icon: 'electro.png' },
-          { id: 9, name: 'Autres', icon: null }
-        ];
-      }
-    } catch (error) {
-      console.error('Error loading categories:', error);
-      // Fallback to hardcoded categories
-      categories = [
-        { id: 1, name: 'Fruits & Légumes', icon: 'fruit-et-legumes.png' },
-        { id: 2, name: 'Épicerie', icon: 'epicerie.jpg' },
-        { id: 3, name: 'Boissons', icon: 'boissons.jpg' },
-        { id: 4, name: 'Hygiène', icon: 'hygiene.jpg' },
-        { id: 5, name: 'Boucherie', icon: 'viande.png' },
-        { id: 6, name: 'Pain', icon: 'pain.png' },
-        { id: 7, name: 'Électroménager', icon: 'electro.jpg' },
-        { id: 8, name: 'Électronique', icon: 'electro.png' },
-        { id: 9, name: 'Autres', icon: null }
-      ];
-    }
-    populateCategorySelects();
-  }
 
   // Load products with fixed prices
-  function loadProducts() {
-    products = [
-      // Fruits & Légumes
-      { name: 'Bananes', category: 'Fruits & Légumes', price: 2.50 },
-      { name: 'Pommes', category: 'Fruits & Légumes', price: 3.20 },
-      { name: 'Oranges', category: 'Fruits & Légumes', price: 2.80 },
-      { name: 'Tomates', category: 'Fruits & Légumes', price: 2.90 },
-      { name: 'Carottes', category: 'Fruits & Légumes', price: 1.80 },
-      { name: 'Laitue', category: 'Fruits & Légumes', price: 1.50 },
-      { name: 'Concombres', category: 'Fruits & Légumes', price: 1.70 },
-      { name: 'Poivrons', category: 'Fruits & Légumes', price: 2.20 },
+ 
 
-      // Épicerie
-      { name: 'Pain', category: 'Pain', price: 1.20 },
-      { name: 'Lait', category: 'Épicerie', price: 1.50 },
-      { name: 'Oeufs', category: 'Épicerie', price: 3.80 },
-      { name: 'Riz', category: 'Épicerie', price: 2.10 },
-      { name: 'Pâtes', category: 'Épicerie', price: 1.90 },
-      { name: 'Café', category: 'Épicerie', price: 4.50 },
-      { name: 'Thé', category: 'Épicerie', price: 3.20 },
-      { name: 'Sucre', category: 'Épicerie', price: 1.80 },
-
-      // Boissons
-      { name: 'Eau minérale', category: 'Boissons', price: 0.80 },
-      { name: 'Jus d\'orange', category: 'Boissons', price: 2.50 },
-      { name: 'Soda', category: 'Boissons', price: 1.90 },
-      { name: 'Vin rouge', category: 'Boissons', price: 8.50 },
-      { name: 'Bière', category: 'Boissons', price: 1.60 },
-
-      // Hygiène
-      { name: 'Dentifrice', category: 'Hygiène', price: 2.80 },
-      { name: 'Savon', category: 'Hygiène', price: 1.90 },
-      { name: 'Shampooing', category: 'Hygiène', price: 3.50 },
-      { name: 'Papier toilette', category: 'Hygiène', price: 4.20 },
-
-      // Boucherie
-      { name: 'Steak haché', category: 'Boucherie', price: 6.50 },
-      { name: 'Poulet', category: 'Boucherie', price: 8.90 },
-      { name: 'Saucisses', category: 'Boucherie', price: 5.20 },
-      { name: 'Jambon', category: 'Boucherie', price: 4.80 },
-
-      // Autres
-      { name: 'Lessive', category: 'Autres', price: 3.90 },
-      { name: 'Détergent', category: 'Autres', price: 2.70 },
-      { name: 'Ampoules', category: 'Électronique', price: 1.50 },
-      { name: 'Batteries', category: 'Électronique', price: 4.90 }
-    ];
-    populateProductSelect();
-  }
-
-  // Load templates from hardcoded list
   function loadTemplates() {
     templates = [
       { id: 1, name: 'Courses hebdomadaires', description: 'Liste de courses pour une semaine type' },
@@ -116,7 +32,7 @@
     populateTemplateSelect();
   }
 
-  // Populate template select
+  
   function populateTemplateSelect() {
     const presetSelect = document.getElementById("presetSelect");
     if (presetSelect) {
@@ -129,60 +45,18 @@
       });
     }
   }
+ 
 
-  // Populate product select with fixed products, optionally filtered by category
-  function populateProductSelect(categoryFilter = null) {
-    const productName = document.getElementById("productName");
-    if (productName) {
-      productName.innerHTML = '<option value="">-- Choisir un produit --</option>';
-      const filteredProducts = categoryFilter ? products.filter(p => p.category === categoryFilter) : products;
-      filteredProducts.forEach(product => {
-        const option = document.createElement('option');
-        option.value = product.name;
-        option.textContent = `${product.name} - ${product.price.toFixed(2)} €`;
-        option.dataset.price = product.price;
-        option.dataset.category = product.category;
-        productName.appendChild(option);
-      });
-    }
-  }
-
-  // Populate category selects
-  function populateCategorySelects() {
-    const productCategory = document.getElementById("productCategory");
-    const categoryFilter = document.getElementById("categoryFilter");
-
-    if (productCategory) {
-      productCategory.innerHTML = '';
-      categories.forEach(cat => {
-        const option = document.createElement('option');
-        option.value = cat.name;
-        option.textContent = cat.name;
-        productCategory.appendChild(option);
-      });
-    }
-
-    if (categoryFilter) {
-      categoryFilter.innerHTML = '<option value="all">Toutes catégories</option>';
-      categories.forEach(cat => {
-        const option = document.createElement('option');
-        option.value = cat.name;
-        option.textContent = cat.name;
-        categoryFilter.appendChild(option);
-      });
-    }
-  }
-
-  // Load items from API
+  
   async function loadItems() {
     try {
-      const response = await fetch(`backend/items.php?list_id=${currentListId || 1}`);
+      const response = await fetch(`${baseUrl}/backend/items.php?list_id=${currentListId || 1}`);
       if (response.ok) {
         const data = await response.json();
         items = data.items || [];
       } else {
         console.warn('Failed to load items from API, using localStorage fallback');
-        // Fallback to localStorage
+      
         const stored = localStorage.getItem(STORAGE_KEY);
         if (stored) {
           items = JSON.parse(stored);
@@ -192,7 +66,7 @@
       }
     } catch (error) {
       console.error('Error loading items:', error);
-      // Fallback to localStorage
+    
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         items = JSON.parse(stored);
