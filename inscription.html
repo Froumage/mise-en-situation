@@ -38,7 +38,7 @@
         <h2 id="signup-title">Créez votre compte</h2>
         <p class="lead">Remplissez le formulaire ci-dessous pour commencer.</p>
 
-        <form class="login-form" action="#" method="post">
+        <form class="login-form" id="registerForm">
           <div class="field">
             <label for="fullname">Nom complet</label>
             <input id="fullname" name="fullname" type="text" required />
@@ -60,6 +60,7 @@
           </div>
 
           <button class="btn-primary" type="submit">S'inscrire</button>
+          <div id="message" class="message" style="display: none;"></div>
         </form>
 
         <div class="login-footer">

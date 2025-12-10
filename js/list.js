@@ -11,19 +11,42 @@
   // API base URL - disabled for local storage only
   // const API_BASE = 'http://localhost:8000/api';
 
-  // Load categories from hardcoded list
-  function loadCategories() {
-    categories = [
-      { id: 1, name: 'Fruits & Légumes', icon: 'fruit-et-legumes.png' },
-      { id: 2, name: 'Épicerie', icon: 'epicerie.jpg' },
-      { id: 3, name: 'Boissons', icon: 'boissons.jpg' },
-      { id: 4, name: 'Hygiène', icon: 'hygiene.jpg' },
-      { id: 5, name: 'Boucherie', icon: 'viande.png' },
-      { id: 6, name: 'Pain', icon: 'pain.png' },
-      { id: 7, name: 'Électroménager', icon: 'electro.jpg' },
-      { id: 8, name: 'Électronique', icon: 'electro.png' },
-      { id: 9, name: 'Autres', icon: null }
-    ];
+  // Load categories from API
+  async function loadCategories() {
+    try {
+      const response = await fetch('backend/categories.php');
+      if (response.ok) {
+        categories = await response.json();
+      } else {
+        console.warn('Failed to load categories from API, using fallback');
+        // Fallback to hardcoded categories
+        categories = [
+          { id: 1, name: 'Fruits & Légumes', icon: 'fruit-et-legumes.png' },
+          { id: 2, name: 'Épicerie', icon: 'epicerie.jpg' },
+          { id: 3, name: 'Boissons', icon: 'boissons.jpg' },
+          { id: 4, name: 'Hygiène', icon: 'hygiene.jpg' },
+          { id: 5, name: 'Boucherie', icon: 'viande.png' },
+          { id: 6, name: 'Pain', icon: 'pain.png' },
+          { id: 7, name: 'Électroménager', icon: 'electro.jpg' },
+          { id: 8, name: 'Électronique', icon: 'electro.png' },
+          { id: 9, name: 'Autres', icon: null }
+        ];
+      }
+    } catch (error) {
+      console.error('Error loading categories:', error);
+      // Fallback to hardcoded categories
+      categories = [
+        { id: 1, name: 'Fruits & Légumes', icon: 'fruit-et-legumes.png' },
+        { id: 2, name: 'Épicerie', icon: 'epicerie.jpg' },
+        { id: 3, name: 'Boissons', icon: 'boissons.jpg' },
+        { id: 4, name: 'Hygiène', icon: 'hygiene.jpg' },
+        { id: 5, name: 'Boucherie', icon: 'viande.png' },
+        { id: 6, name: 'Pain', icon: 'pain.png' },
+        { id: 7, name: 'Électroménager', icon: 'electro.jpg' },
+        { id: 8, name: 'Électronique', icon: 'electro.png' },
+        { id: 9, name: 'Autres', icon: null }
+      ];
+    }
     populateCategorySelects();
   }
 
@@ -150,13 +173,32 @@
     }
   }
 
-  // Load items from localStorage
-  function loadItems() {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      items = JSON.parse(stored);
-    } else {
-      items = [];
+  // Load items from API
+  async function loadItems() {
+    try {
+      const response = await fetch(`backend/items.php?list_id=${currentListId || 1}`);
+      if (response.ok) {
+        const data = await response.json();
+        items = data.items || [];
+      } else {
+        console.warn('Failed to load items from API, using localStorage fallback');
+        // Fallback to localStorage
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          items = JSON.parse(stored);
+        } else {
+          items = [];
+        }
+      }
+    } catch (error) {
+      console.error('Error loading items:', error);
+      // Fallback to localStorage
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        items = JSON.parse(stored);
+      } else {
+        items = [];
+      }
     }
     render();
   }
@@ -227,39 +269,74 @@
   }
 
   // --- Ajouter un produit ---
-  function addItem(){
+  async function addItem(){
     const name = productName.value.trim();
     if(!name) return;
+
+    if (!auth.isLoggedIn()) {
+      alert('Veuillez vous connecter pour ajouter des articles.');
+      window.location.href = 'connexion.html';
+      return;
+    }
+
     const category = productCategory.value;
     const qty = productQty.value.trim();
     const price = parseFloat(productPrice.value) || 0;
 
-    const newItem = {
-      id: Date.now(), // Simple ID generation
-      name,
-      category,
-      quantity: qty,
-      price,
-      done: false
-    };
-
-    items.push(newItem);
-    productName.value = "";
-    productQty.value = "";
-    productPrice.value = "";
-    render();
-    showStatus("Produit ajouté");
-
-    // Sauvegarder automatiquement la liste
-    save();
-
-    // Ajouter automatiquement au panier
-    if (window.CartManager) {
-      window.CartManager.addToCart(newItem);
+    // Find category ID from name
+    const categoryObj = categories.find(cat => cat.name === category);
+    if (!categoryObj) {
+      alert('Catégorie invalide');
+      return;
     }
 
-    // Rediriger directement vers le panier
-    window.location.href = 'cart.html';
+    try {
+      const response = await fetch('backend/lists.php', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'add_item',
+          list_id: currentListId || 1, // Default to list 1 for now
+          name: name,
+          category_id: categoryObj.id,
+          quantity: qty,
+          price: price
+        })
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        productName.value = "";
+        productQty.value = "";
+        productPrice.value = "";
+        loadItems(); // Reload items from server
+        showStatus("Produit ajouté");
+
+        // Add to cart if CartManager exists
+        const newItem = {
+          id: result.item_id,
+          name,
+          category,
+          quantity: qty,
+          price,
+          done: false
+        };
+
+        if (window.CartManager) {
+          window.CartManager.addToCart(newItem);
+        }
+
+        // Redirect to cart
+        window.location.href = 'cart.html';
+      } else {
+        alert('Erreur: ' + result.message);
+      }
+    } catch (error) {
+      console.error('Error adding item:', error);
+      alert('Erreur lors de l\'ajout de l\'article');
+    }
   }
 
   // --- Affichage principal ---
@@ -371,26 +448,65 @@
     }
   }
 
-  // --- Update item locally ---
-  function updateItem(id, updates) {
-    const index = items.findIndex(item => item.id === id);
-    if (index !== -1) {
-      items[index] = { ...items[index], ...updates };
+  // --- Update item via API ---
+  async function updateItem(id, updates) {
+    try {
+      const response = await fetch('backend/lists.php', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'update_item',
+          item_id: id,
+          ...updates
+        })
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        // Reload items from server
+        await loadItems();
+        showStatus("Produit mis à jour");
+      } else {
+        console.error('Failed to update item:', result.message);
+        showStatus("Erreur lors de la mise à jour");
+      }
+    } catch (error) {
+      console.error('Error updating item:', error);
+      showStatus("Erreur lors de la mise à jour");
     }
-    render();
-    showStatus("Produit mis à jour");
-    // Sauvegarder automatiquement après mise à jour
-    save();
   }
 
-  // --- Delete item locally ---
-  function deleteItem(id) {
+  // --- Delete item via API ---
+  async function deleteItem(id) {
     if (!confirm("Supprimer cet article ?")) return;
-    items = items.filter(item => item.id !== id);
-    render();
-    showStatus("Produit supprimé");
-    // Sauvegarder automatiquement après suppression
-    save();
+
+    try {
+      const response = await fetch('backend/lists.php', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'delete_item',
+          item_id: id
+        })
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        // Reload items from server
+        await loadItems();
+        showStatus("Produit supprimé");
+      } else {
+        console.error('Failed to delete item:', result.message);
+        showStatus("Erreur lors de la suppression");
+      }
+    } catch (error) {
+      console.error('Error deleting item:', error);
+      showStatus("Erreur lors de la suppression");
+    }
   }
 
   // --- Clear all items ---

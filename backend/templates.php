@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     exit(0);
 }
 
-// Hardcoded templates since DB setup failed
+
 $templates = [
     ['id' => 1, 'name' => 'Courses hebdomadaires', 'description' => 'Liste de courses pour une semaine type'],
     ['id' => 2, 'name' => 'Courses du weekend', 'description' => 'Courses pour le weekend'],
@@ -20,7 +20,7 @@ $templates = [
     ['id' => 8, 'name' => 'Courses de nettoyage', 'description' => 'Produits d\'entretien']
 ];
 
-// Category mapping for template items
+
 $categories = [
     1 => 'Fruits & Légumes',
     2 => 'Épicerie',
@@ -34,7 +34,7 @@ $categories = [
 ];
 
 $template_items = [
-    1 => [ // Courses hebdomadaires
+    1 => [ 
         ['name' => 'Pain', 'category' => 'Pain', 'quantity' => '1 baguette', 'price' => 1.20],
         ['name' => 'Lait', 'category' => 'Épicerie', 'quantity' => '2L', 'price' => 1.50],
         ['name' => 'Oeufs', 'category' => 'Épicerie', 'quantity' => '12', 'price' => 3.80],
@@ -46,14 +46,14 @@ $template_items = [
         ['name' => 'Fromage', 'category' => 'Boucherie', 'quantity' => '200g', 'price' => 4.50],
         ['name' => 'Yaourt', 'category' => 'Boissons', 'quantity' => '6', 'price' => 2.40]
     ],
-    2 => [ // Courses du weekend
+    2 => [
         ['name' => 'Croissants', 'category' => 'Pain', 'quantity' => '6', 'price' => 3.00],
         ['name' => 'Café', 'category' => 'Épicerie', 'quantity' => '500g', 'price' => 4.50],
         ['name' => 'Jus d\'orange', 'category' => 'Boissons', 'quantity' => '1L', 'price' => 2.50],
         ['name' => 'Pain au chocolat', 'category' => 'Pain', 'quantity' => '4', 'price' => 2.80],
         ['name' => 'Confiture', 'category' => 'Épicerie', 'quantity' => '1 pot', 'price' => 3.20]
     ],
-    3 => [ // Courses de fête
+    3 => [ 
         ['name' => 'Champagne', 'category' => 'Boissons', 'quantity' => '1 bouteille', 'price' => 25.00],
         ['name' => 'Vin rouge', 'category' => 'Boissons', 'quantity' => '2 bouteilles', 'price' => 8.50],
         ['name' => 'Apéritifs', 'category' => 'Boissons', 'quantity' => 'assortis', 'price' => 15.00],
@@ -63,14 +63,14 @@ $template_items = [
         ['name' => 'Charcuterie', 'category' => 'Boucherie', 'quantity' => '300g', 'price' => 8.90],
         ['name' => 'Dessert', 'category' => 'Autres', 'quantity' => '1', 'price' => 15.00]
     ],
-    4 => [ // Courses de base
+    4 => [ 
         ['name' => 'Pain', 'category' => 'Pain', 'quantity' => '1', 'price' => 1.20],
         ['name' => 'Lait', 'category' => 'Épicerie', 'quantity' => '1L', 'price' => 0.90],
         ['name' => 'Oeufs', 'category' => 'Épicerie', 'quantity' => '6', 'price' => 2.10],
         ['name' => 'Beurre', 'category' => 'Épicerie', 'quantity' => '250g', 'price' => 2.80],
         ['name' => 'Café', 'category' => 'Épicerie', 'quantity' => '250g', 'price' => 3.50]
     ],
-    5 => [ // Courses bio
+    5 => [ 
         ['name' => 'Pain bio', 'category' => 'Pain', 'quantity' => '1', 'price' => 2.50],
         ['name' => 'Lait bio', 'category' => 'Épicerie', 'quantity' => '1L', 'price' => 1.80],
         ['name' => 'Oeufs bio', 'category' => 'Épicerie', 'quantity' => '6', 'price' => 4.20],
@@ -78,7 +78,7 @@ $template_items = [
         ['name' => 'Légumes bio', 'category' => 'Fruits & Légumes', 'quantity' => '1kg', 'price' => 5.50],
         ['name' => 'Riz bio', 'category' => 'Épicerie', 'quantity' => '500g', 'price' => 3.20]
     ],
-    6 => [ // Courses végétariennes
+    6 => [ 
         ['name' => 'Fruits', 'category' => 'Fruits & Légumes', 'quantity' => '2kg', 'price' => 5.00],
         ['name' => 'Légumes', 'category' => 'Fruits & Légumes', 'quantity' => '2kg', 'price' => 4.50],
         ['name' => 'Pâtes', 'category' => 'Épicerie', 'quantity' => '500g', 'price' => 1.90],
@@ -87,14 +87,14 @@ $template_items = [
         ['name' => 'Fromage végétal', 'category' => 'Autres', 'quantity' => '200g', 'price' => 3.50],
         ['name' => 'Yaourt végétal', 'category' => 'Boissons', 'quantity' => '6', 'price' => 3.00]
     ],
-    7 => [ // Courses pour bébé
+    7 => [ 
         ['name' => 'Lait infantile', 'category' => 'Boissons', 'quantity' => '800g', 'price' => 18.50],
         ['name' => 'Couches', 'category' => 'Hygiène', 'quantity' => '1 paquet', 'price' => 12.90],
         ['name' => 'Petits pots', 'category' => 'Autres', 'quantity' => '12', 'price' => 8.50],
         ['name' => 'Lingettes', 'category' => 'Hygiène', 'quantity' => '1 paquet', 'price' => 4.20],
         ['name' => 'Crème pour bébé', 'category' => 'Hygiène', 'quantity' => '1 tube', 'price' => 6.80]
     ],
-    8 => [ // Courses de nettoyage
+    8 => [ 
         ['name' => 'Lessive', 'category' => 'Autres', 'quantity' => '3L', 'price' => 4.50],
         ['name' => 'Détergent vaisselle', 'category' => 'Autres', 'quantity' => '1L', 'price' => 2.80],
         ['name' => 'Nettoyant multi-usage', 'category' => 'Autres', 'quantity' => '750ml', 'price' => 2.20],
