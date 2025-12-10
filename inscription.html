@@ -38,7 +38,7 @@
         <h2 id="signup-title">Créez votre compte</h2>
         <p class="lead">Remplissez le formulaire ci-dessous pour commencer.</p>
 
-        <form class="login-form" action="#" method="post">
+        <form class="login-form" id="registerForm" method="post" action="/backend/auth.php">
           <div class="field">
             <label for="fullname">Nom complet</label>
             <input id="fullname" name="fullname" type="text" required />
@@ -50,16 +50,17 @@
           </div>
 
           <div class="field">
-            <label for="password1">Mot de passe</label>
-            <input id="password1" name="password1" type="password" required />
+            <label for="password">Mot de passe</label>
+            <input id="password" name="password" type="password" required />
           </div>
 
           <div class="field">
-            <label for="password2">Confirmer le mot de passe</label>
-            <input id="password2" name="password2" type="password" required />
+            <label for="confirmPassword">Confirmer le mot de passe</label>
+            <input id="confirmPassword" name="confirmPassword" type="password" required />
           </div>
 
           <button class="btn-primary" type="submit">S'inscrire</button>
+          <div id="message" class="message" style="display: none;"></div>
         </form>
 
         <div class="login-footer">
@@ -75,6 +76,32 @@
         <a href="#" aria-label="Instagram">Instagram</a>
       </div>
     </footer>
+    <script src="js/auth.js"></script>
     <script src="js/main.js"></script>
+    <script>
+      document.getElementById('registerForm').addEventListener('submit',async function(e) {
+        e.preventDefault();
+
+        const fullname = document.getElementById('fullname').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        
+        const messageDiv = document.getElementById('message');
+        messageDiv.style.display = 'none';
+
+        const result = await auth.register(fullname, email, password, confirmPassword);
+
+        messageDiv.textContent = result.message;
+        messageDiv.className = result.success ? 'message success' : 'message error';
+        messageDiv.style.display = 'block';
+
+        if (result.success) {
+          setTimeout(() => {
+            window.location.href = 'index.html';
+          }, 1000);
+        }
+      });
+    </script>
   </body>
 </html>

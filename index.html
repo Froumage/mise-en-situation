@@ -18,18 +18,24 @@
         <img src="images/logo.png" alt="Logo" class="header-logo">
         <h1>Quick shop</h1>
     </div>
+    <div class="cart-total">
+        <a href="cart.html" class="cart-link">
+            🛒 <span id="headerCartTotal">0.00 €</span>
+        </a>
+    </div>
     <button id="menuBtn" class="icon-btn" aria-label="Menu">☰</button>
     <div class="right-actions">
       <button id="themeToggle" class="icon-btn" aria-label="Basculer thème">🌓</button>
     </div>
   </header>
 
-  <nav id="mainNav" class="nav hidden" aria-hidden="true">
-    <a href="index.html">Ma liste</a>
-    <a href="connexion.html">Connexion</a>
-     <a href="pages/contact.html">Contact</a>
-    <a href="product.html">Nos produits</a>
-  </nav>
+    <nav id="mainNav" class="nav hidden" aria-hidden="true">
+      <a href="index.html">Ma liste</a>
+      <a href="cart.html">Panier</a>
+      <a href="connexion.html">Connexion</a>
+       <a href="pages/contact.html">Contact</a>
+      
+    </nav>
 
   <main class="container" id="app">
     <section class="card">
@@ -43,21 +49,29 @@
           <option value="Boissons">Boissons</option>
           <option value="Hygiène">Hygiène</option>
           <option value="Boucherie">Boucherie</option>
+          <option value="Pain">Pain</option>
+          <option value="Électroménager">Électroménager</option>
+          <option value="Électronique">Électronique</option>
           <option value="Autres">Autres</option>
         </select>
 
-        <input id="searchInput" placeholder="Rechercher un produit" aria-label="Recherche produit">
+
         <input id="productPrice" placeholder="Prix (€)" type="number" step="0.01" aria-label="Prix du produit">
 
       </div>
 <form id="addForm" class="add-form" aria-label="Ajouter un produit">
-  <input id="productName" placeholder="Nom du produit" required aria-label="Nom du produit">
+  <select id="productName" required aria-label="Nom du produit">
+    <option value="">-- Choisir un produit --</option>
+  </select>
   <select id="productCategory" aria-label="Catégorie">
     <option>Fruits & Légumes</option>
     <option>Épicerie</option>
     <option>Boissons</option>
     <option>Hygiène</option>
     <option>Boucherie</option>
+    <option>Pain</option>
+    <option>Électroménager</option>
+    <option>Électronique</option>
     <option>Autres</option>
   </select>
   <input id="productQty" placeholder="Quantité (ex: 1kg / 2)" aria-label="Quantité">
@@ -88,6 +102,7 @@
       <hr/>
       <h4>Fonctionnalités futures</h4>
       <ul class="muted">
+        <li><a href="cart.html">Panier d'achat</a></li>
         <li>Cartes des magasins</li>
         <li>Comparaison de prix</li>
         <li>Click & Collect</li>
@@ -104,6 +119,7 @@
     </div>
   </footer>
   <script src="js/main.js"></script>
-  <script src="js/list.js"></script>
+  <script type="module" src="js/list.js"></script>
+  <script src="js/cart.js"></script>
 </body>
 </html>
