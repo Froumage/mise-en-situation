@@ -1,4 +1,5 @@
- import { populateCategorySelects } from "./category/functions.js";
+
+import { populateCategorySelects } from "./category/functions.js";
  export function loadProducts() {
     const products = [
       // Fruits & Légumes
