@@ -1,7 +1,8 @@
-import { loadItems, showStatus, items, render, save } from "./main.js";
+// Fonctions pour gérer les items via l'API backend
+import { baseUrl } from "../config.js";
 
 // --- Update item via API ---
- export async function updateItem(id, updates) {
+export async function updateItem(id, updates) {
     try {
       const response = await fetch('backend/lists.php', {
         method: 'PATCH',
@@ -30,8 +31,8 @@ import { loadItems, showStatus, items, render, save } from "./main.js";
     }
   }
 
-  // --- Delete item via API ---
-  export async function deleteItem(id) {
+// --- Delete item via API ---
+export async function deleteItemAPI(id) {
     if (!confirm("Supprimer cet article ?")) return;
 
     try {
@@ -61,17 +62,8 @@ import { loadItems, showStatus, items, render, save } from "./main.js";
     }
   }
 
-  // --- Clear all items ---
- export function clearItems() {
-    items = [];
-    render();
-    showStatus("Liste vidée");
-    // Sauvegarder automatiquement après vidage
-    save();
-  }
-
- // --- Get template items ---
-    export function getTemplateItems(templateId) {
+// --- Get template items ---
+export function getTemplateItems(templateId) {
       const templateData = {
         1: [ // Courses hebdomadaires
           { name: 'Pain', category: 'Pain', quantity: '1 baguette', price: 1.20 },
@@ -146,119 +138,106 @@ import { loadItems, showStatus, items, render, save } from "./main.js";
     }
   
   
-   // --- Ajouter un produit ---
- export  async function addItem(){
-    const name = productName.value.trim();
-    if(!name) return;
+// --- Add item via API ---
+export async function addItemAPI(itemData) {
+  try {
+    const response = await fetch(`${baseUrl}/backend/lists.php`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        action: 'add_item',
+        ...itemData
+      })
+    });
 
-    if (!auth.isLoggedIn()) {
-      alert('Veuillez vous connecter pour ajouter des articles.');
-      window.location.href = 'connexion.html';
-      return;
-    }
-
-    const category = productCategory.value;
-    const qty = productQty.value.trim();
-    const price = parseFloat(productPrice.value) || 0;
-
-    // Find category ID from name
-    const categoryObj = categories.find(cat => cat.name === category);
-    if (!categoryObj) {
-      alert('Catégorie invalide');
-      return;
-    }
-
-    try {
-      const response = await fetch('backend/lists.php', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          action: 'add_item',
-          list_id: currentListId || 1, // Default to list 1 for now
-          name: name,
-          category_id: categoryObj.id,
-          quantity: qty,
-          price: price
-        })
-      });
-
-      const result = await response.json();
-      if (result.success) {
-        productName.value = "";
-        productQty.value = "";
-        productPrice.value = "";
-        loadItems(); // Reload items from server
-        showStatus("Produit ajouté");
-
-        // Add to cart if CartManager exists
-        const newItem = {
-          id: result.item_id,
-          name,
-          category,
-          quantity: qty,
-          price,
-          done: false
-        };
-
-        if (window.CartManager) {
-          window.CartManager.addToCart(newItem);
-        }
-
-        // Redirect to cart
-        window.location.href = 'cart.html';
-      } else {
-        alert('Erreur: ' + result.message);
-      }
-    } catch (error) {
-      console.error('Error adding item:', error);
-      alert('Erreur lors de l\'ajout de l\'article');
-    }
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error('Error adding item via API:', error);
+    return { success: false, message: error.message };
   }
+}
+
+// --- Load items from API ---
+export async function loadItemsAPI(listId = 1) {
+  try {
+    const response = await fetch(`${baseUrl}/backend/items.php?list_id=${listId}`);
+    if (response.ok) {
+      const data = await response.json();
+      return { success: true, items: data.items || [] };
+    } else {
+      return { success: false, items: [] };
+    }
+  } catch (error) {
+    console.error('Error loading items from API:', error);
+    return { success: false, items: [] };
+  }
+}
+
+// --- Vider la liste ---
+export function clearItems() {
+  items = [];
+  render();
+  save();
+  showStatus("Liste vidée ✓");
+}
+
+// --- Modifier un item ---
+export function editItem(id) {
+  const item = items.find(x => x.id === id);
+  if (!item) return;
   
-    // --- Modifier un produit ---
-  export function editItem(id){
-    const it = items.find(x => x.id === id);
-    if(!it) return;
-    const newName = prompt("Modifier le nom du produit", it.name);
-    if(newName === null) return;
-    const newQty = prompt("Quantité", it.quantity || "");
-    const newPrice = prompt("Prix", it.price || "");
-    if(newQty !== null || newPrice !== null) {
-      const updates = {};
-      if(newQty !== null) updates.quantity = newQty.trim();
-      if(newPrice !== null) updates.price = parseFloat(newPrice) || 0;
-      updateItem(it.id, updates);
-    }
-  }
+  const newName = prompt("Modifier le nom du produit", item.name);
+  if (newName === null) return;
+  
+  const newQty = prompt("Quantité", item.quantity || "");
+  if (newQty === null) return;
+  
+  const newPrice = prompt("Prix (€)", item.price || "");
+  if (newPrice === null) return;
 
-  // Load products with fixed prices
-  export async function loadItems() {
+  item.name = newName.trim();
+  item.quantity = newQty.trim();
+  item.price = parseFloat(newPrice) || 0;
+  
+  render();
+  save();
+  showStatus("Produit modifié ✓");
+}
+// --- Supprimer un item ---
+export function deleteItem(id) {
+  if (!confirm("Supprimer cet article ?")) return;
+  
+  items = items.filter(item => item.id !== id);
+  render();
+  save();
+  showStatus("Produit supprimé ✓");
+}
+
+// --- Ajouter un produit ---
+export function addItem() {
+  const name = productName.value.trim();
+  if (!name) {
+    alert("Veuillez sélectionner un produit");
+    return;
+  }}
+  // --- Charger les items depuis localStorage ---
+ export function loadItems() {
     try {
-      const response = await fetch(`${baseUrl}/backend/items.php?list_id=${currentListId || 1}`);
-      if (response.ok) {
-        const data = await response.json();
-        items = data.items || [];
-      } else {
-        console.warn('Failed to load items from API, using localStorage fallback');
-      
-        const stored = localStorage.getItem(STORAGE_KEY);
-        if (stored) {
-          items = JSON.parse(stored);
-        } else {
-          items = [];
-        }
-      }
-    } catch (error) {
-      console.error('Error loading items:', error);
-    
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         items = JSON.parse(stored);
+        console.log("Items chargés depuis localStorage:", items.length);
       } else {
         items = [];
+        console.log("Aucun item dans localStorage");
       }
+    } catch (error) {
+      console.error('Error loading items from localStorage:', error);
+      items = [];
     }
     render();
   }
+

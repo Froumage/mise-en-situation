@@ -1,5 +1,5 @@
 
-import { items, render, showStatus, save } from "../list/functions.js";
+import { items, render, showStatus, save } from "../template/list/functions.js";
   // --- Load template ---
    export  async function loadTemplate() {
       const presetSelect = document.getElementById("presetSelect");
@@ -67,7 +67,6 @@ import { items, render, showStatus, save } from "../list/functions.js";
         save();
       }
     }
-  
     // --- Get template items ---
    export function getTemplateItems(templateId) {
       const templateData = {
@@ -156,7 +155,6 @@ import { items, render, showStatus, save } from "../list/functions.js";
     populateTemplateSelect();
   }
 
-  
   export function populateTemplateSelect() {
     const presetSelect = document.getElementById("presetSelect");
     if (presetSelect) {
@@ -169,4 +167,72 @@ import { items, render, showStatus, save } from "../list/functions.js";
       });
     }
   }
- 
+  // --- Affichage principal ---
+  export function render(){
+    if(!itemsList) return;
+    itemsList.innerHTML = "";
+    const cat = (categoryFilter && categoryFilter.value) || "all";
+
+    const filtered = items.filter(it=>{
+      if(cat !== "all" && it.category !== cat) return false;
+      return true;
+    });
+
+    if(filtered.length === 0){
+      const li = document.createElement("li");
+      li.textContent = "Aucun produit pour l'instant. Ajoute-en !";
+      li.className = "muted";
+      itemsList.appendChild(li);
+      updateTotal();
+      return;
+    }
+
+    filtered.forEach(it=>{
+      const li = document.createElement("li");
+
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox"; checkbox.checked = !!it.done;
+      checkbox.addEventListener("change", ()=> updateItem(it.id, { done: checkbox.checked }));
+
+      const left = document.createElement("div");
+      left.className = "item-left";
+      const title = document.createElement("div");
+      title.textContent = it.name;
+      const meta = document.createElement("div");
+      meta.className = "item-meta";
+      meta.textContent = `${it.quantity || ""} • ${it.category} • ${parseFloat(it.price).toFixed(2)} €`;
+
+      left.appendChild(title);
+      left.appendChild(meta);
+
+      const editBtn = document.createElement("button");
+      editBtn.className = "icon-btn";
+      editBtn.textContent = "✏️";
+      editBtn.addEventListener("click", ()=> editItem(it.id));
+
+      const delBtn = document.createElement("button");
+      delBtn.className = "icon-btn";
+      delBtn.textContent = "🗑️";
+      delBtn.addEventListener("click", ()=> deleteItem(it.id));
+
+      li.appendChild(checkbox);
+      li.appendChild(left);
+      li.appendChild(editBtn);
+      li.appendChild(delBtn);
+
+      itemsList.appendChild(li);
+    });
+
+    updateTotal();
+  }
+// --- Message d’état ---
+ export function showStatus(msg){
+    if(!status) return;
+    status.textContent = msg;
+    setTimeout(()=>{ status.textContent = ""; }, 1400);
+  }
+  // --- Sauvegarde locale ---
+  export function save(){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    showStatus("Sauvegardé");
+  }
