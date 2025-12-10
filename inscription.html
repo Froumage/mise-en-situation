@@ -38,7 +38,7 @@
         <h2 id="signup-title">Créez votre compte</h2>
         <p class="lead">Remplissez le formulaire ci-dessous pour commencer.</p>
 
-        <form class="login-form" id="registerForm">
+        <form class="login-form" id="registerForm" method="post" action="/backend/auth.php">
           <div class="field">
             <label for="fullname">Nom complet</label>
             <input id="fullname" name="fullname" type="text" required />
@@ -50,13 +50,13 @@
           </div>
 
           <div class="field">
-            <label for="password1">Mot de passe</label>
-            <input id="password1" name="password1" type="password" required />
+            <label for="password">Mot de passe</label>
+            <input id="password" name="password" type="password" required />
           </div>
 
           <div class="field">
-            <label for="password2">Confirmer le mot de passe</label>
-            <input id="password2" name="password2" type="password" required />
+            <label for="confirmPassword">Confirmer le mot de passe</label>
+            <input id="confirmPassword" name="confirmPassword" type="password" required />
           </div>
 
           <button class="btn-primary" type="submit">S'inscrire</button>
